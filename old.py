@@ -1,45 +1,38 @@
 import pygame
 import os
-import random
 pygame.font.init()
 pygame.mixer.init()
 
-ASTRIOD_NUMBER = 5
-WIDTH, HEIGHT = 1800, 900 # the width and height of the screen
+WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Preston / Dad Starship Game!")
+pygame.display.set_caption("First Game!")
 
-WHITE = (255, 255, 255) # the colour white
-BLACK = (0, 0, 0) # the colour black
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
 
 BORDER = pygame.Rect(WIDTH//2 - 5, 0, 10, HEIGHT)
 
-BULLET_HIT_SOUND = pygame.mixer.Sound('Assets/Grenade+1.mp3')
-BULLET_FIRE_SOUND = pygame.mixer.Sound('Assets/ZAP.mp3')
-EXPLODE_SOUND = pygame.mixer.Sound('Assets/KABOOM.mp3')
+#BULLET_HIT_SOUND = pygame.mixer.Sound('Assets/Grenade+1.mp3')
+#BULLET_FIRE_SOUND = pygame.mixer.Sound('Assets/Gun+Silencer.mp3')
 
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
-WINNER_FONT = pygame.font.SysFont('comicsans', 150)
+WINNER_FONT = pygame.font.SysFont('comicsans', 100)
 
-FPS = 60 #Frames per second -> number of times the computer draws the screen
+FPS = 60
 VEL = 5
-ASTRIOD_VEL = 5
-BULLET_VEL = 30
+BULLET_VEL = 7
 MAX_BULLETS = 3
-SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 100, 100
-ASTRIOD_WIDTH, ASTRIOD_HEIGHT = 100, 100
+SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 55, 40
 
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 
 YELLOW_SPACESHIP_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'spaceship_yellow.png')) # Load Red Spaceship Picture
+    os.path.join('Assets', 'spaceship_yellow.png'))
 YELLOW_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(
-    YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 90) # Strech Red Spaceship Picture
+    YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 90)
 
 RED_SPACESHIP_IMAGE = pygame.image.load(
     os.path.join('Assets', 'spaceship_red.png'))
@@ -49,38 +42,26 @@ RED_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(
 SPACE = pygame.transform.scale(pygame.image.load(
     os.path.join('Assets', 'space.png')), (WIDTH, HEIGHT))
 
-KABOOM_SPACESHIP_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'EXPLOSION-2.png'))
-KABOOM_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(
-    KABOOM_SPACESHIP_IMAGE, (SPACESHIP_WIDTH+150, SPACESHIP_HEIGHT+150)), 0)
 
-ASTRIOD_IMAGE = pygame.image.load(
-    os.path.join('Assets', 'astroid.png'))
-ASTRIOD = pygame.transform.rotate(pygame.transform.scale(
-    ASTRIOD_IMAGE, (ASTRIOD_WIDTH, ASTRIOD_HEIGHT)), 90)
-
-def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health, astriods):
+def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health):
     WIN.blit(SPACE, (0, 0))
     pygame.draw.rect(WIN, BLACK, BORDER)
 
     red_health_text = HEALTH_FONT.render(
-        "Health: " + str(red_health), 1, WHITE) # text for the red health
+        "Health: " + str(red_health), 1, WHITE)
     yellow_health_text = HEALTH_FONT.render(
-        "Health: " + str(yellow_health), 1, WHITE) # text for the yellow health
-    WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10)) # draw red health
-    WIN.blit(yellow_health_text, (10, 10)) # draw yellow health
+        "Health: " + str(yellow_health), 1, WHITE)
+    WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
+    WIN.blit(yellow_health_text, (10, 10))
 
     WIN.blit(YELLOW_SPACESHIP, (yellow.x, yellow.y))
     WIN.blit(RED_SPACESHIP, (red.x, red.y))
-
-    for astriod in astriods:
-        WIN.blit(ASTRIOD, (astriod.x, astriod.y))
 
     for bullet in red_bullets:
         pygame.draw.rect(WIN, RED, bullet)
 
     for bullet in yellow_bullets:
-        pygame.draw.rect(WIN, GREEN, bullet)
+        pygame.draw.rect(WIN, YELLOW, bullet)
 
     pygame.display.update()
 
@@ -124,30 +105,18 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
         elif bullet.x < 0:
             red_bullets.remove(bullet)
 
-def handle_astroid(astriods):
-    for astriod in astriods:
-        if astriod.y >= HEIGHT:
-            astriod.y = -200
-            astriod.x = random.random() * WIDTH
-        astriod.y += ASTRIOD_VEL
-
 
 def draw_winner(text):
     draw_text = WINNER_FONT.render(text, 1, WHITE)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pygame.display.update()
-    pygame.time.delay(3000)
+    pygame.time.delay(5000)
 
 
 def main():
-    red = pygame.Rect(WIDTH - 200, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+    red = pygame.Rect(700, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     yellow = pygame.Rect(100, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
-
-    astriods = []
-    for i in range(1,ASTRIOD_NUMBER):
-        astriod = pygame.Rect(random.random() * WIDTH, random.random() * HEIGHT, ASTRIOD_WIDTH, ASTRIOD_HEIGHT)
-        astriods.append(astriod)
 
     red_bullets = []
     yellow_bullets = []
@@ -167,34 +136,30 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL and len(yellow_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
-                        yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 30, 10)
+                        yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 10, 5)
                     yellow_bullets.append(bullet)
-                    BULLET_FIRE_SOUND.play()
+                    #BULLET_FIRE_SOUND.play()
 
                 if event.key == pygame.K_RCTRL and len(red_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
-                        red.x, red.y + red.height//2 - 2, 30, 10)
+                        red.x, red.y + red.height//2 - 2, 10, 5)
                     red_bullets.append(bullet)
-                    BULLET_FIRE_SOUND.play()
+                    #BULLET_FIRE_SOUND.play()
 
             if event.type == RED_HIT:
                 red_health -= 1
-                BULLET_HIT_SOUND.play()
+                #BULLET_HIT_SOUND.play()
 
             if event.type == YELLOW_HIT:
                 yellow_health -= 1
-                BULLET_HIT_SOUND.play()
+                #BULLET_HIT_SOUND.play()
 
         winner_text = ""
         if red_health <= 0:
-            EXPLODE_SOUND.play()
-            WIN.blit(KABOOM_SPACESHIP, (red.x-100, red.y-100))
-            winner_text = "DADDY Wins!"
+            winner_text = "Yellow Wins!"
 
         if yellow_health <= 0:
-            EXPLODE_SOUND.play()
-            WIN.blit(KABOOM_SPACESHIP, (yellow.x-100, yellow.y-100))
-            winner_text = "PRESTON Wins!"
+            winner_text = "Red Wins!"
 
         if winner_text != "":
             draw_winner(winner_text)
@@ -204,11 +169,10 @@ def main():
         yellow_handle_movement(keys_pressed, yellow)
         red_handle_movement(keys_pressed, red)
 
-        handle_astroid(astriods)
         handle_bullets(yellow_bullets, red_bullets, yellow, red)
 
         draw_window(red, yellow, red_bullets, yellow_bullets,
-                    red_health, yellow_health,astriods)
+                    red_health, yellow_health)
 
     main()
 
